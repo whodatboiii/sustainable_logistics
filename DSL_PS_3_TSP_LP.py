@@ -73,7 +73,7 @@ def solve_model(distance_matrix):
     return status, value, tours[0]
 
 def main():
-  D = [[0, 64, 229, 109, 378, 110, 201, 304, 346],
+  distance_matrix = [[0, 64, 229, 109, 378, 110, 201, 304, 346],
   [64, 0, 280, 161, 370, 266, 253, 360, 398],
   [229, 280, 0, 124, 205, 53, 86, 86, 120],
   [109, 161, 124, 0, 277, 110, 96, 204, 241],
@@ -83,7 +83,7 @@ def main():
   [304, 360, 86, 204, 248, 144, 170, 0, 104],
   [346, 398, 120, 241, 146, 142, 204, 104, 0],
     ]
-  status, value, tour = solve_model(D)
+  status, value, tour = solve_model(distance_matrix)
 
   if status == pywraplp.Solver.OPTIMAL:
       print('Objective value =', value)
