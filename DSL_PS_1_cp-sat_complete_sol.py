@@ -2,7 +2,7 @@ from ortools.sat.python import cp_model
 
 
 class VarArraySolutionPrinter(cp_model.CpSolverSolutionCallback):
-    """Print intermediate solutions."""
+    """This class is used to print out the intermediate solutions as the solver searches for all solutions. The __init__ method initializes the class by storing the variables to be printed and initializing a counter to keep track of the number of solutions found. The on_solution_callback method is called by the solver every time a solution is found, and it prints out the values of the variables. Finally, the solution_count method returns the total number of solutions found."""
 
     def __init__(self, variables):
         cp_model.CpSolverSolutionCallback.__init__(self)
