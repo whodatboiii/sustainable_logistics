@@ -48,6 +48,8 @@ def main():
     for i in range(num_workers):
         for j in range(num_tasks):
             objective_terms.append(costs[i][j] * x[i, j])
+            
+    # or objective_terms = [costs[i][j] * x[i, j] for i in range(num_workers) for j in range(num_tasks)]
     solver.Minimize(solver.Sum(objective_terms))
 
     # Solve
