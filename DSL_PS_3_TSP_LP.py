@@ -1,81 +1,76 @@
 from ortools.linear_solver import pywraplp
 
-# Returns solution differently based on its type and value
-def SolVal(x):
-  if type(x) is not list:
-    if (x is None):
-      return 0
-    elif (isinstance(x,(int,float))):
-      return x
-    elif (x.Integer() is False):
-      return x.SolutionValue()
+def solution_value(x):
+    if isinstance(x, (int, float)):
+        return x
+    elif x is None:
+        return 0
+    elif not x.Integer():
+        return x.SolutionValue()
     else:
-      return int(x.SolutionValue())
-  elif type(x) is list:
-    return [SolVal(e) for e in x]
+        return int(x.SolutionValue())
 
-def solve_model_eliminate(D, Subtours=[]):
-  
-  s = pywraplp.Solver.CreateSolver('CBC')
-  n = len(D)
-  x = [[s.IntVar(0, 0 if D[i][j] == 0 else 1,'')
-        for j in range(n)] for i in range(n)] 
+def solve_model_eliminate(distance_matrix, subtours=None):
+    solver = pywraplp.Solver.CreateSolver('CBC')
+    n = len(distance_matrix)
+    x = [[solver.IntVar(0, 0 if distance_matrix[i][j] == 0 else 1, '') for j in range(n)] for i in range(n)] 
 
-  # Basic constraints: 
-  # - one only predecessor; 
-  # - one only successor; 
-  # - no route between same node -> xii=0
-  for i in range(n):  
-    s.Add(sum(x[i][j] for j in range(n)) == 1) 
-    s.Add(sum(x[j][i] for j in range(n)) == 1) 
-    s.Add(x[i][i] == 0)
+    # Basic constraints: 
+    # - one only predecessor; 
+    # - one only successor; 
+    # - no route between same node -> xii=0
+    for i in range(n):  
+        solver.Add(sum(x[i][j] for j in range(n)) == 1) 
+        solver.Add(sum(x[j][i] for j in range(n)) == 1) 
+        solver.Add(x[i][i] == 0)
 
- # Subtour constraint: The key to the elimination is to realize that 
- # for any strict subset of the nodes, 
- # the number of chosen arcs must be less than the number of nodes
-  for sub in Subtours:
-    # summing over K returns the number of chosen arcs
-    K = [x[sub[i]][sub[j]]+x[sub[j]][sub[i]]
-         for i in range(len(sub)-1) for j in range(i+1, len(sub))]
-    # Adding constraint: number of arcs in subtour is <= number of nodes
-    s.Add(sum(K) <= len(sub)-1)
+    # Subtour constraint: The key to the elimination is to realize that 
+    # for any strict subset of the nodes, 
+    # the number of chosen arcs must be less than the number of nodes
+    if subtours:
+        for sub in subtours:
+            k = [x[sub[i]][sub[j]] + x[sub[j]][sub[i]] for i in range(len(sub) - 1) for j in range(i + 1, len(sub))]
+            solver.Add(sum(k) <= len(sub) - 1)
 
-  # Objective function
-  s.Minimize(s.Sum(x[i][j]*(0 if D[i][j] is None else D[i][j]) 
-                   for i in range(n) for j in range(n))) 
-  status = s.Solve()
-  tours = extract_tours(SolVal(x), n) 
-  print("Tours:", tours)
-  return status, s.Objective().Value(), tours
+    # Objective function
+    solver.Minimize(solver.Sum(x[i][j] * (0 if distance_matrix[i][j] is None else distance_matrix[i][j]) for i in range(n) for j in range(n))) 
+    status = solver.Solve()
+    tours = extract_tours(x, n) 
+    print("Tours:", tours)
+    return status, solver.Objective().Value(), tours
 
-def extract_tours(R, n):
-  node = 0
-  tours = [[0]]
-  allnodes = [0]+[1]*(n-1)
-  # We iterate until the number of tours returned by the solver is one, 
-  # taking care to accumulate subtours as they are discovered
-  while sum(allnodes) > 0:
-    #Another way of writing this for loop -> next = [i for i in range(n) if R[node][i]==1][0]
-    for i in range(n):
-      if R[node][i]==1:
-        next = [i][0]
-    if next not in tours[-1]:
-      tours[-1].append(next)
-      node = next
-    else:
-      node = allnodes.index(1)
-      tours.append([node])
-    allnodes[node] = 0
-  return tours
+def extract_tours(solution, n):
+    node = 0
+    tours = [[0]]
+    all_nodes = [0] + [1] * (n - 1)
 
-def solve_model(D):
-  subtours, tours = [], []
-  while len(tours) != 1:
-    status, Value, tours = solve_model_eliminate(D, subtours)
-    if status == pywraplp.Solver.OPTIMAL:
-      # [0,1,2].extend([3,4]) = [0,1,2,3,4]
-      subtours.extend(tours)
-  return status, Value, tours[0]
+    while sum(all_nodes) > 0:
+        for i in range(n):
+            if solution[node][i] == 1:
+                next_node = i
+                break
+
+        if next_node not in tours[-1]:
+            tours[-1].append(next_node)
+            node = next_node
+        else:
+            node = all_nodes.index(1)
+            tours.append([node])
+
+        all_nodes[node] = 0
+
+    return tours
+
+def solve_model(distance_matrix):
+    subtours = []
+    tours = []
+
+    while len(tours) != 1:
+        status, value, tours = solve_model_eliminate(distance_matrix, subtours)
+        if status == pywraplp.Solver.OPTIMAL:
+            subtours.extend(tours)
+
+    return status, value, tours[0]
 
 def main():
   D = [[0, 64, 229, 109, 378, 110, 201, 304, 346],
