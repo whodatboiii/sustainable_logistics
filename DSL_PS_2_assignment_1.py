@@ -29,6 +29,9 @@ def main():
     for i in range(num_workers):
         for j in range(num_tasks):
             x[i, j] = solver.IntVar(0, 1, '')
+            
+    # At this stage, the decision variables have only been 
+    # created and initialized with bounds, but their values have not been set yet.
 
     # Constraints
 
