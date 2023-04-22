@@ -31,6 +31,8 @@ def solve_model_eliminate(distance_matrix, subtours=None):
         for sub in subtours:
             k = [x[sub[i]][sub[j]] + x[sub[j]][sub[i]] for i in range(len(sub) - 1) for j in range(i + 1, len(sub))]
             solver.Add(sum(k) <= len(sub) - 1)
+    # -1 because a subtour is a cycle; start = finish
+    # we compute the total cost of using that edge for each edge, and want to minimize that
 
     # Objective function
     solver.Minimize(solver.Sum(x[i][j] * (0 if distance_matrix[i][j] is None else distance_matrix[i][j]) for i in range(n) for j in range(n))) 
