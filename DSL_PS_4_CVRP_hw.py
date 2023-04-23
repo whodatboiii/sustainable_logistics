@@ -113,19 +113,29 @@ def main():
         from_node = manager.IndexToNode(from_index)
         return data['demands'][from_node]
 
-    demand_callback_index = routing.RegisterUnaryTransitCallback(
-        demand_callback)
+    demand_callback_index = routing.RegisterUnaryTransitCallback(demand_callback)
     routing.AddDimensionWithVehicleCapacity(
         demand_callback_index,
         0,  # null capacity slack
         data['vehicle_capacities'],  # vehicle maximum capacities
         True,  # start cumul to zero
         'Capacity')
-
-
+    
 
     # Complete here
+    # Define the search parameters.
+    search_parameters = pywrapcp.DefaultRoutingSearchParameters()
+    search_parameters.local_search_metaheuristic = (
+        routing_enums_pb2.LocalSearchMetaheuristic.GUIDED_LOCAL_SEARCH)
+    search_parameters.time_limit.seconds = 30
+    search_parameters.log_search = True
 
+    solution = routing.SolveWithParameters(search_parameters)
+
+    if solution:
+        print_solution(data = data, manager = manager, routing = routing, solution = solution)
+    else:
+        print("not found")
 
 
 if __name__ == '__main__':
