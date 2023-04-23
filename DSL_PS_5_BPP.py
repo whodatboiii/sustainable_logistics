@@ -14,11 +14,11 @@ def create_data_model():
 
 
 def main():
+    """Model for the Bin Packing Problem"""
     data = create_data_model()
 
     # Create the mip solver with the SCIP backend.
     solver = pywraplp.Solver.CreateSolver('SCIP')
-
 
     # Variables
     # x[i, j] = 1 if item i is packed in bin j.
@@ -33,15 +33,15 @@ def main():
         y[j] = solver.IntVar(0, 1, 'y[%i]' % j)
 
     # Constraints
-    # Each item must be in exactly one bin.
+    # Each item i must be in exactly one bin j.
     for i in data['items']:
         solver.Add(sum(x[i, j] for j in data['bins']) == 1)
 
-    # The amount packed in each bin cannot exceed its capacity.
+    # The amount packed in each bin cannot exceed its capacity (=100 for every bin here).
     for j in data['bins']:
         solver.Add(
-            sum(x[(i, j)] * data['weights'][i] for i in data['items']) <= y[j] *
-            data['bin_capacity'])
+            sum(x[(i, j)] * data['weights'][i] for i in data['items']) 
+            <= y[j] * data['bin_capacity'])
 
     # Objective: minimize the number of bins used.
     solver.Minimize(solver.Sum([y[j] for j in data['bins']]))
@@ -73,4 +73,3 @@ def main():
 
 if __name__ == '__main__':
     main()
- 

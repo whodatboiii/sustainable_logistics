@@ -44,7 +44,7 @@ def print_solution(manager, routing, solution):
 
 
 def main():
-    """Entry point of the program."""
+    """Solve the Traveling Salesman Problem."""
     # Instantiate the data problem.
     data = create_data_model()
 

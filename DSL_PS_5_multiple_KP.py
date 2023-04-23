@@ -1,4 +1,3 @@
-"""Solve a multiple knapsack problem using a MIP solver."""
 from ortools.linear_solver import pywraplp
 
 def create_data_model():
@@ -15,7 +14,6 @@ def create_data_model():
     return data
 
 def main():
-    
     data = create_data_model()
 
     # Create the mip solver with the SCIP backend.
@@ -43,7 +41,7 @@ def main():
     # Maximize total value of packed items.
     objective = solver.Objective()
     for i in data['items']:
-        for b in data['bins']:
+        for j in data['bins']:
             objective.SetCoefficient(x[i, j], data['values'][i])
     objective.SetMaximization()
 
@@ -56,19 +54,23 @@ def main():
             print(f'Bin {j}')
             bin_weight = 0
             bin_value = 0
+            packed_items = [] #This was missing in the old correction
             for i in data['items']:
-                if x[i, b].solution_value() > 0:
-                    print(
-                        f"Item {i} weight: {data['weights'][i]} value: {data['values'][i]}"
-                    )
+                if x[i, j].solution_value() > 0:
+                    packed_items.append(i)
                     bin_weight += data['weights'][i]
                     bin_value += data['values'][i]
+            print(f'Packed items: {packed_items}')
             print(f'Packed bin weight: {bin_weight}')
             print(f'Packed bin value: {bin_value}\n')
             total_weight += bin_weight
         print(f'Total packed weight: {total_weight}')
     else:
         print('The problem does not have an optimal solution.')
+
+if __name__ == '__main__':
+    main()
+
 
 
 if __name__ == '__main__':

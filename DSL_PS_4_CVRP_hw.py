@@ -80,7 +80,7 @@ def print_solution(data, manager, routing, solution):
 
 
 def main():
-    """Solve the CVRP problem."""
+    """Solve the Capacitated Vehicle Routing Problem"""
     # Instantiate the data problem.
     data = create_data_model()
 

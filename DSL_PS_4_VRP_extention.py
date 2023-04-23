@@ -30,11 +30,8 @@ def create_data_model():
     data['depot'] = 0
     return data
 
-
-
-
 def main():
-    """Solve the CVRP problem."""
+    """Solve the Vehicle Routing Problem with other heuristics"""
 
     # Instantiate the data problem.
     data = create_data_model()
@@ -43,7 +40,6 @@ def main():
                                            data['num_vehicles'], data['depot'])
     # Create Routing Model.
     routing = pywrapcp.RoutingModel(manager)
-
 
     # Create and register a transit callback.
     def distance_callback(from_index, to_index):
@@ -67,7 +63,6 @@ def main():
         dimension_name)
     distance_dimension = routing.GetDimensionOrDie(dimension_name)
     distance_dimension.SetGlobalSpanCostCoefficient(100)
-
 
     # Setting first solution heuristic.
     search_parameters = pywrapcp.DefaultRoutingSearchParameters()

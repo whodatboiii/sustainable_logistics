@@ -14,11 +14,10 @@ def main():
         3, 86, 66, 31, 65, 0, 79, 20, 65, 52, 13]]
     capacities = [850]
 
-        # Create the solver.
+    # Create the solver.
     solver = pywrapknapsack_solver.KnapsackSolver(
         pywrapknapsack_solver.KnapsackSolver.
         KNAPSACK_DYNAMIC_PROGRAMMING_SOLVER, 'KnapsackExample')
-
 
     solver.Init(values, dimensions, capacities)
     computed_value = solver.Solve()

@@ -31,7 +31,7 @@ def create_data_model():
     return data
 
 def main():
-    """Solve the VRP problem."""
+    """Solve the Vehicle Routing Problem."""
 
     # Instantiate the data problem.
     data = create_data_model()

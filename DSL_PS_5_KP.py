@@ -1,8 +1,8 @@
 from ortools.algorithms import pywrapknapsack_solver
 
-
 def main():
-
+    """Model for the 0/1 Knapsack problem"""
+    
     values = [
         360, 83, 59, 130, 431, 67, 230, 52, 93, 125, 670, 892, 600, 38, 48, 147,
         78, 256, 63, 17, 120, 164, 432, 35, 92, 110, 22, 42, 50, 323, 514, 28,
@@ -21,7 +21,6 @@ def main():
         pywrapknapsack_solver.KnapsackSolver.
         KNAPSACK_DYNAMIC_PROGRAMMING_SOLVER, 'KnapsackExample')
 
-
     solver.Init(values, weights, capacities)
     computed_value = solver.Solve()
 
@@ -37,7 +36,6 @@ def main():
     print('Total weight:', total_weight)
     print('Packed items:', packed_items)
     print('Packed_weights:', packed_weights)
-
 
 if __name__ == '__main__':
     main()
