@@ -30,11 +30,8 @@ def create_data_model():
     data['depot'] = 0
     return data
 
-
-
-
 def main():
-    """Solve the CVRP problem."""
+    """Solve the VRP problem."""
 
     # Instantiate the data problem.
     data = create_data_model()
@@ -43,7 +40,6 @@ def main():
                                            data['num_vehicles'], data['depot'])
     # Create Routing Model.
     routing = pywrapcp.RoutingModel(manager)
-
 
     # Create and register a transit callback.
     def distance_callback(from_index, to_index):
@@ -68,7 +64,6 @@ def main():
     distance_dimension = routing.GetDimensionOrDie(dimension_name)
     distance_dimension.SetGlobalSpanCostCoefficient(100)
 
-
     # Setting first solution heuristic.
     search_parameters = pywrapcp.DefaultRoutingSearchParameters()
     search_parameters.first_solution_strategy = (
@@ -79,7 +74,6 @@ def main():
     # Print solution on console.
     if solution:
         print_solution(data, manager, routing, solution)
-
 
 def print_solution(data, manager, routing, solution):
     """Prints solution on console."""
@@ -99,9 +93,6 @@ def print_solution(data, manager, routing, solution):
         print(plan_output)
         max_route_distance = max(route_distance, max_route_distance)
     print('Maximum of the route distances: {}m'.format(max_route_distance))
-
-
-
 
 if __name__ == '__main__':
     main()
