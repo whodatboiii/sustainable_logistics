@@ -32,12 +32,13 @@ def main(unused_argv):
     x = [model.NewIntVar(0, 1, "x[%i]" % i) for i in range(num_cities)]
     z = model.NewIntVar(0, num_cities, "z")
 
+    # 'x' represents whether or not a warehouse is opened in a particular city.
+    # 'z' represents the number of warehouses opened
+
     # objective to minimize
     model.Add(z == sum(x))
 
-
     # constraints
-    
     # ensure that all cities are covered
     for i in range(num_cities):
         model.Add(sum([x[j] for j in range(num_cities) if distance[i][j] <= min_distance]) >= 1)
