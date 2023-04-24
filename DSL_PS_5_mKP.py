@@ -32,9 +32,9 @@ def main():
         if solver.BestSolutionContains(i):
             packed_items.append(i)
             packed_weights.append(dimensions[0][i])
-            packed_volumes.append(dimensions[1][i])
+            #packed_volumes.append(dimensions[1][i])
             total_weight += dimensions[0][i]
-            total_volume += dimensions[1][i]
+            #total_volume += dimensions[1][i]
     print('Total weight:', total_weight)
     print('Total volume:', total_volume)
     print('Packed items:', packed_items)
